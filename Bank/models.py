@@ -95,7 +95,7 @@ class Transaction(models.Model):
         verbose_name_plural = 'Transactions'
 
     def __str__(self):
-        return f'Transaction ID: {self.id}, sender: {self.user.name}, category: {self.category}'
+        return f'Transaction ID: {self.id}, sender: {self.user}, category: {self.category}'
 
 
 class ActionAddMoney(models.Model):

@@ -5,6 +5,7 @@ from .views import *
 router = DefaultRouter()
 router.register(r'account', BankAccountViewSet)
 router.register(r'action', ActionAddMoneyViewSet)
+router.register(r'transfer', TransferViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
