@@ -11,5 +11,6 @@ urlpatterns = [
     path('', include(router.urls)),
     path('customer/', CustomerList.as_view()),
     path('dj-rest-auth/', include('dj_rest_auth.urls')),
-    path('dj-rest-auth/registration/', include('dj_rest_auth.registration.urls'))
+    path('dj-rest-auth/registration/', include('dj_rest_auth.registration.urls')),
+    path('transactions/', TransactionAPIView.as_view())
 ]

@@ -89,6 +89,10 @@ class Transaction(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE,
                              verbose_name='Customer')
+    amount = models.DecimalField(max_digits=15,
+                                 decimal_places=2,
+                                 verbose_name='Amount of transaction',
+                                 default=0)
 
     class Meta:
         verbose_name = 'transaction'

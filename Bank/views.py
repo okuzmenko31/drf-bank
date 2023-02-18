@@ -3,9 +3,9 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework import viewsets
 from rest_framework import mixins
 from .models import BankAccount, Customer, Transfer
-from rest_framework.generics import ListCreateAPIView
+from rest_framework.generics import ListCreateAPIView, ListAPIView
 from .serializers import CustomerSerializer, BankAccountSerializer, \
-    ActionAddMoneySerializer, TransferSerializer
+    ActionAddMoneySerializer, TransferSerializer, TransactionSerializer
 from .services import create_card
 from .models import ActionAddMoney, Transaction
 
@@ -67,14 +67,19 @@ class TransferViewSet(viewsets.GenericViewSet,
         if transfer.category:
             Transaction.objects.create(category=transfer.category,
                                        transfer=transfer,
-                                       user=self.request.user)
+                                       user=self.request.user,
+                                       amount=transfer.amount)
         else:
             Transaction.objects.create(transfer=transfer,
-                                       user=self.request.user)
+                                       user=self.request.user,
+                                       amount=transfer.amount)
 
-# 
-# class TransactionViewSet(viewsets.GenericViewSet,
-#                          mixins.ListModelMixin,
-#                          mixins.CreateModelMixin):
-#     queryset = Transaction.objects.all()
-#     # serializer_class =
+
+class TransactionAPIView(ListAPIView):
+    queryset = Transaction.objects.all()
+    serializer_class = TransactionSerializer
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = (TokenAuthentication,)
+
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user)
