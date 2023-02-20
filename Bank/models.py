@@ -116,3 +116,29 @@ class ActionAddMoney(models.Model):
 
     def __str__(self):
         return f'{self.bank_account.account_number}, amount: {self.amount}'
+
+
+class Receipts(models.Model):
+    transfer = models.ForeignKey(Transfer,
+                                 on_delete=models.CASCADE,
+                                 verbose_name='Transfer')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             on_delete=models.CASCADE,
+                             verbose_name='Customer')
+    amount = models.DecimalField(max_digits=15,
+                                 decimal_places=2,
+                                 verbose_name='Amount of transaction',
+                                 default=0)
+    sender = models.ForeignKey(BankAccount,
+                               on_delete=models.CASCADE,
+                               verbose_name='Sender')
+    description = models.CharField(max_length=5000,
+                                   verbose_name='Description of transfer',
+                                   blank=True)
+
+    class Meta:
+        verbose_name = 'receipt'
+        verbose_name_plural = 'Receipts'
+
+    def __str__(self):
+        return f'Receipt ID: {self.id}, sender: {self.user}, amount: {self.amount}'

@@ -36,9 +36,16 @@ class ActionAddMoneySerializer(serializers.ModelSerializer):
 
 
 class TransferSerializer(serializers.ModelSerializer):
+
+    def __init__(self, *args, **kwargs):
+        super(TransferSerializer, self).__init__(*args, **kwargs)
+        if 'request' in self.context:
+            self.fields['from_account'].queryset = self.fields['from_account']\
+                .queryset.filter(user=self.context['view'].request.user)
+
     class Meta:
         model = Transfer
-        fields = ('id', 'category', 'to_account', 'amount', 'description')
+        fields = ('id', 'category', 'from_account', 'to_account', 'amount', 'description')
         read_only_fields = ('id',)
 
     def create(self, validated_data):
