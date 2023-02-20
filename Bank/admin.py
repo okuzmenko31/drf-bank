@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import TransferCategory, Transfer, BankAccount, Transaction, Customer
+from .models import TransferCategory, Transfer, BankAccount, Transaction, Customer, Receipts
 
 
 @admin.register(TransferCategory)
@@ -42,3 +42,11 @@ class CustomerAdmin(admin.ModelAdmin):
     search_fields = ['id', 'user', 'first_name', 'last_name', 'country', 'city']
     list_filter = ['id', 'first_name', 'last_name', 'country', 'city', 'user']
 
+
+@admin.register(Receipts)
+class ReceiptsAdmin(admin.ModelAdmin):
+    list_display = ['id', 'card', 'amount', 'transfer', 'user']
+    list_display_links = ['id', 'card', 'amount']
+    list_editable = ['transfer', 'user']
+    search_fields = ['id', 'card', 'transfer', 'user']
+    list_filter = ['id', 'card', 'transfer', 'user']

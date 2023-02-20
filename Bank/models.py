@@ -43,12 +43,14 @@ class BankAccount(models.Model):
                                   verbose_name='Bank account balance',
                                   default=0)
 
-    class Meta:
-        verbose_name = 'account'
-        verbose_name_plural = 'Bank accounts'
 
-    def __str__(self):
-        return f'{self.user}, account_number: {self.account_number}, balance: {self.balance}'
+class Meta:
+    verbose_name = 'account'
+    verbose_name_plural = 'Bank accounts'
+
+
+def __str__(self):
+    return f'{self.user}, account_number: {self.account_number}, balance: {self.balance}'
 
 
 class Transfer(models.Model):
@@ -119,6 +121,9 @@ class ActionAddMoney(models.Model):
 
 
 class Receipts(models.Model):
+    card = models.CharField(max_length=650,
+                            verbose_name='Card',
+                            blank=True)
     transfer = models.ForeignKey(Transfer,
                                  on_delete=models.CASCADE,
                                  verbose_name='Transfer')

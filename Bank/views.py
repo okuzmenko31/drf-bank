@@ -5,9 +5,10 @@ from rest_framework import mixins
 from .models import BankAccount, Customer, Transfer
 from rest_framework.generics import ListCreateAPIView, ListAPIView
 from .serializers import CustomerSerializer, BankAccountSerializer, \
-    ActionAddMoneySerializer, TransferSerializer, TransactionSerializer
+    ActionAddMoneySerializer, TransferSerializer, TransactionSerializer, ReceiptsSerializer
 from .services import create_card
-from .models import ActionAddMoney, Transaction
+from .models import ActionAddMoney, Transaction, Receipts
+from .utils import CreateReceipt
 
 
 class CustomerList(ListCreateAPIView):
@@ -47,7 +48,8 @@ class ActionAddMoneyViewSet(viewsets.GenericViewSet,
     authentication_classes = (TokenAuthentication,)
 
 
-class TransferViewSet(viewsets.GenericViewSet,
+class TransferViewSet(CreateReceipt,
+                      viewsets.GenericViewSet,
                       mixins.CreateModelMixin):
     queryset = Transfer.objects.all()
     serializer_class = TransferSerializer
@@ -73,6 +75,7 @@ class TransferViewSet(viewsets.GenericViewSet,
             Transaction.objects.create(transfer=transfer,
                                        user=self.request.user,
                                        amount=transfer.amount)
+        self.create_receipt(transfer=transfer)
 
 
 class TransactionAPIView(ListAPIView):
@@ -83,3 +86,13 @@ class TransactionAPIView(ListAPIView):
 
     def get_queryset(self):
         return self.queryset.filter(user=self.request.user)
+
+
+class ReceiptsAPIView(ListAPIView):
+    queryset = Receipts.objects.all()
+    serializer_class = ReceiptsSerializer
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = (TokenAuthentication,)
+
+    def get_queryset(self):
+        return Receipts.objects.filter(user=self.request.user)

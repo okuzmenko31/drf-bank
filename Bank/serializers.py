@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import BankAccount, Customer, ActionAddMoney, Transfer, Transaction
+from .models import BankAccount, Customer, ActionAddMoney, Transfer, Transaction, Receipts
 
 
 class BankAccountSerializer(serializers.ModelSerializer):
@@ -49,17 +49,20 @@ class TransferSerializer(serializers.ModelSerializer):
         read_only_fields = ('id',)
 
     def create(self, validated_data):
-        try:
-            to_acc = BankAccount.objects.get(account_number=validated_data['to_account'])
-            if to_acc.balance + validated_data['amount'] > 0:
-                to_acc.balance += validated_data['amount']
-                to_acc.save()
-            else:
-                raise serializers.ValidationError('Invalid amount')
-        except Exception as a:
-            print(a)
-            raise serializers.ValidationError('No such account with this card number')
-        return super(TransferSerializer, self).create(validated_data)
+        if validated_data['from_account'].balance > 0:
+            try:
+                to_acc = BankAccount.objects.get(account_number=validated_data['to_account'])
+                if to_acc.balance + validated_data['amount'] > 0:
+                    to_acc.balance += validated_data['amount']
+                    to_acc.save()
+                else:
+                    raise serializers.ValidationError('Invalid amount')
+            except Exception as a:
+                print(a)
+                raise serializers.ValidationError('No such account with this card number')
+            return super(TransferSerializer, self).create(validated_data)
+        else:
+            raise serializers.ValidationError('Not enough money')
 
 
 class TransactionSerializer(serializers.ModelSerializer):
@@ -67,3 +70,9 @@ class TransactionSerializer(serializers.ModelSerializer):
         model = Transaction
         fields = ('id', 'category', 'transfer', 'amount')
         read_only_fields = ('id', 'transfer', 'amount')
+
+
+class ReceiptsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Receipts
+        fields = ('id', 'transfer', 'user', 'amount', 'description')
