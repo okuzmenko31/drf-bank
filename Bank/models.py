@@ -34,6 +34,11 @@ class TransferCategory(models.Model):
 
 
 class BankAccount(models.Model):
+    customer = models.ForeignKey(Customer,
+                                 on_delete=models.PROTECT,
+                                 verbose_name='Customer',
+                                 null=True,
+                                 blank=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE,
                              verbose_name='Owner')
@@ -43,14 +48,12 @@ class BankAccount(models.Model):
                                   verbose_name='Bank account balance',
                                   default=0)
 
+    class Meta:
+        verbose_name = 'account'
+        verbose_name_plural = 'Bank accounts'
 
-class Meta:
-    verbose_name = 'account'
-    verbose_name_plural = 'Bank accounts'
-
-
-def __str__(self):
-    return f'{self.user}, account_number: {self.account_number}, balance: {self.balance}'
+    def __str__(self):
+        return f'{self.user}, account_number: {self.account_number}, balance: {self.balance}'
 
 
 class Transfer(models.Model):

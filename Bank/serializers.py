@@ -15,9 +15,12 @@ class CustomerSerializer(serializers.ModelSerializer):
         fields = ('id', 'first_name', 'last_name', 'country', 'city', 'image')
 
     def create(self, validated_data):
-        # override standard method to create customer without pk in url
-        validated_data['user_id'] = self.context['request'].user.id
-        return super(CustomerSerializer, self).create(validated_data)
+        if Customer.objects.filter(user=validated_data['user']).exists():
+            raise serializers.ValidationError('You can only create one customer!')
+        else:
+            # override standard method to create customer without pk in url
+            validated_data['user_id'] = self.context['request'].user.id
+            return super(CustomerSerializer, self).create(validated_data)
 
 
 class ActionAddMoneySerializer(serializers.ModelSerializer):
