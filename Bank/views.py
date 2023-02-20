@@ -55,11 +55,11 @@ class TransferViewSet(viewsets.GenericViewSet,
     authentication_classes = (TokenAuthentication,)
 
     def get_queryset(self):
-        from_acc = BankAccount.objects.filter(user=self.request.user)
-        return self.queryset.filter(from_account=from_acc)
+        return self.queryset.filter(self.request.data['from-account'])
 
     def perform_create(self, serializer):
-        from_acc = BankAccount.objects.get(user=self.request.user)
+        from_acc_pk = self.request.data['from_account']
+        from_acc = BankAccount.objects.get(pk=from_acc_pk)
         transfer = serializer.save(from_account=from_acc)
         from_acc.balance -= transfer.amount
         from_acc.save()

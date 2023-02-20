@@ -3,7 +3,7 @@ from rest_framework.routers import DefaultRouter
 from .views import *
 
 router = DefaultRouter()
-router.register(r'account', BankAccountViewSet)
+router.register(r'accounts', BankAccountViewSet)
 router.register(r'action', ActionAddMoneyViewSet)
 router.register(r'transfer', TransferViewSet)
 
