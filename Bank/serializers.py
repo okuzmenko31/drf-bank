@@ -48,20 +48,17 @@ class TransferSerializer(serializers.ModelSerializer):
         fields = ('id', 'category', 'from_account', 'to_account', 'amount', 'description')
         read_only_fields = ('id',)
 
-    def validate(self, data):
+    def create(self, validated_data):
         try:
-            data['request'] = BankAccount.objects.get(pk=data['request'].pk)
+            to_acc = BankAccount.objects.get(account_number=validated_data['to_account'])
+            if to_acc.balance + validated_data['amount'] > 0:
+                to_acc.balance += validated_data['amount']
+                to_acc.save()
+            else:
+                raise serializers.ValidationError('Invalid amount')
         except Exception as a:
             print(a)
             raise serializers.ValidationError('No such account with this card number')
-
-    def create(self, validated_data):
-        to_acc = BankAccount.objects.get(account_number=validated_data['to_account'])
-        if to_acc.balance + validated_data['amount'] > 0:
-            to_acc.balance += validated_data['amount']
-            to_acc.save()
-        else:
-            raise serializers.ValidationError('Invalid amount')
         return super(TransferSerializer, self).create(validated_data)
 
 

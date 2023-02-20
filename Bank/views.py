@@ -55,7 +55,7 @@ class TransferViewSet(viewsets.GenericViewSet,
     authentication_classes = (TokenAuthentication,)
 
     def get_queryset(self):
-        return self.queryset.filter(self.request.data['from-account'])
+        return self.queryset.filter(from_account=self.request.data['from_account'])
 
     def perform_create(self, serializer):
         from_acc_pk = self.request.data['from_account']
