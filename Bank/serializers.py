@@ -52,7 +52,7 @@ class TransferSerializer(serializers.ModelSerializer):
         read_only_fields = ('id',)
 
     def create(self, validated_data):
-        if validated_data['from_account'].balance > 0:
+        if validated_data['from_account'].balance >= validated_data['amount']:
             try:
                 to_acc = BankAccount.objects.get(account_number=validated_data['to_account'])
                 if to_acc.balance + validated_data['amount'] > 0:
